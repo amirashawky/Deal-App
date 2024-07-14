@@ -1,6 +1,7 @@
 
-import Advertisments from '../../models/advertisments.model/advertisments.model';
-import ApiResponse from "../../helpers/ApiResponse";
+import City from '../../models/city.model/city.model';
+import Region from '../../models/region.model/region.model';
+import User from '../../models/user.model/user.model';
 import { checkExistThenGet, checkExist } from "../../helpers/CheckMethods";
 import { body } from 'express-validator/check';
 import i18n from 'i18n';
@@ -16,12 +17,23 @@ export default {
             body('area').not().isEmpty().withMessage(() => { return i18n.__('areaRequired') }),
             body('price').optional().not().isEmpty().withMessage(() => { return i18n.__('priceRequired') }),
             
-            body('city').not().isEmpty().withMessage(() => { return i18n.__('cityRequired') }),
-            body('district').not().isEmpty().withMessage(() => { return i18n.__('districtRequired') }),
+            body('city').not().isEmpty().withMessage(() => { return i18n.__('cityRequired') })
+            .custom(async(val)=>{
+                await checkExist(val, City, { deleted: false });
+                return true;
+            }),
+            body('district').not().isEmpty().withMessage(() => { return i18n.__('districtRequired') })
+            .custom(async(val)=>{
+                await checkExist(val, Region, { deleted: false });
+                return true;
+            }),
             body('description').not().isEmpty().withMessage(() => { return i18n.__('descriptionRequired') }),
 
-            body('user').optional().not().isEmpty().withMessage(() => { return i18n.__('userRequired') }),
-
+            body('user').optional().not().isEmpty().withMessage(() => { return i18n.__('userRequired') })
+            .custom(async(val)=>{
+                await checkExist(val, User, { status:'ACTIVE' });
+                return true;
+            })
         ];
         return validations;
     },
