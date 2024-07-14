@@ -72,6 +72,8 @@ router.route('/').get( requireAuth,  requestController.findAll);
  *         description: rejection from the backend that define that the user has no permission to access this api.
  *       401:
  *         description: Unauthorized 
+ *       422:
+ *         description: Validation error,Invalid inputs to the request.
  */
 
 router.route('/').post(requireAuth,
